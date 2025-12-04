@@ -5,6 +5,7 @@ Modifica los parámetros según tus necesidades
 """
 
 from analisis_gbd import AnalizadorGBD
+from pathlib import Path
 
 
 def main():
@@ -16,8 +17,11 @@ def main():
     # CONFIGURACIÓN - Modifica estos valores según tus necesidades
     # ============================================================================
 
-    # Archivo de datos
-    ARCHIVO_CSV = "gbd_all_dalys_1423.csv"
+    # Archivo de datos - detecta si se ejecuta desde src/ o desde raíz
+    if Path.cwd().name == 'src':
+        ARCHIVO_CSV = "../data/gbd_all_dalys_1423.csv"
+    else:
+        ARCHIVO_CSV = "data/gbd_all_dalys_1423.csv"
 
     # Ubicación geográfica para analizar
     # Ejemplo: "Global", "United States", "Spain", etc.

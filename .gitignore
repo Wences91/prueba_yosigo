@@ -43,4 +43,8 @@ Thumbs.db
 .ipynb_checkpoints
 
 # Gráficos generados (opcional - descomenta si no quieres subir los gráficos)
-# graficos/*.png
+# output/graficos/*.png
+
+# Mantener carpetas pero ignorar su contenido (excepto .gitkeep)
+# output/graficos/*
+# !output/graficos/.gitkeep
