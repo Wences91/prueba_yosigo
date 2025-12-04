@@ -1,61 +1,110 @@
-# Análisis de Datos GBD (Global Burden of Disease)
+# 📊 Análisis de Datos GBD (Global Burden of Disease)
 
-Este proyecto analiza datos de DALYs (Disability-Adjusted Life Years - Años de Vida Ajustados por Discapacidad) del estudio Global Burden of Disease, generando visualizaciones de evolución temporal y rankings de enfermedades.
+Proyecto de análisis y visualización de datos de DALYs (Disability-Adjusted Life Years - Años de Vida Ajustados por Discapacidad) del estudio Global Burden of Disease.
 
-## Características
+## 🎯 Características
 
 - 📈 **Evolución Temporal**: Gráficos de líneas mostrando la evolución de las principales causas de DALYs a lo largo de los años
 - 🏆 **Rankings**: Gráficos de barras con las principales causas ordenadas por impacto
-- 👥 **Comparación por Sexo**: Análisis comparativo entre hombres y mujeres
+- 👥 **Comparación por Sexo**: Análisis comparativo entre hombres y mujeres (cuando hay datos disponibles)
 - 🔥 **Mapas de Calor**: Visualización de la evolución temporal usando heatmaps
+- 🎨 **Gráficos de Alta Calidad**: Exportación en alta resolución (300 DPI)
+- ⚙️ **Configuración Flexible**: Fácil personalización de parámetros
 
-## Requisitos
+## 📁 Estructura del Proyecto
 
-- Python 3.8 o superior
-- Bibliotecas listadas en `requirements.txt`
+```
+prueba_yosigo/
+├── data/                          # Datos de entrada
+│   └── gbd_all_dalys_1423.csv    # Dataset GBD
+├── src/                           # Código fuente
+│   ├── analisis_gbd.py           # Script principal con clase AnalizadorGBD
+│   └── analisis_personalizado.py # Script personalizable
+├── output/                        # Resultados generados
+│   └── graficos/                 # Gráficos generados
+├── scripts/                       # Scripts de utilidad
+│   ├── instalar.sh               # Script de instalación
+│   ├── ejecutar.sh               # Ejecuta análisis básico
+│   └── ejecutar_personalizado.sh # Ejecuta análisis personalizado
+├── .gitignore                     # Archivos ignorados por git
+├── requirements.txt               # Dependencias de Python
+└── README.md                      # Este archivo
+```
 
-## Instalación
+## 🚀 Inicio Rápido
 
-1. **Clonar o descargar el repositorio**
+### Instalación Automática
 
-2. **Instalar dependencias**:
+```bash
+# Clonar o descargar el repositorio
+git clone <url-del-repo>
+cd prueba_yosigo
+
+# Instalar dependencias
+bash scripts/instalar.sh
+```
+
+### Instalación Manual
+
 ```bash
 pip install -r requirements.txt
 ```
 
-## Uso
+## 💻 Uso
 
-### Uso Básico
+### Opción 1: Análisis Rápido (Recomendado)
 
-Ejecutar el análisis con la configuración predeterminada:
+Ejecuta el análisis con configuración predeterminada:
 
 ```bash
-python analisis_gbd.py
+bash scripts/ejecutar.sh
 ```
 
-Esto generará automáticamente un reporte completo con los siguientes gráficos:
+O desde Python:
+
+```bash
+python3 src/analisis_gbd.py
+```
+
+**Esto generará automáticamente:**
 - Evolución temporal de las 10 principales causas
-- Ranking de las 20 principales causas
-- Comparación por sexo de las 15 principales causas
+- Ranking de las 20 principales causas (año 2017)
 - Mapa de calor de las 15 principales causas
 
-Todos los gráficos se guardarán en la carpeta `graficos/`.
+### Opción 2: Análisis Personalizado
 
-### Uso Avanzado
+Edita primero el archivo `src/analisis_personalizado.py` para configurar:
+- Ubicación geográfica
+- Grupo de edad
+- Sexo
+- Año específico
+- Número de causas principales (top_n)
 
-Para personalizar el análisis, puedes usar el script `analisis_personalizado.py`:
+Luego ejecuta:
 
 ```bash
-python analisis_personalizado.py
+bash scripts/ejecutar_personalizado.sh
 ```
 
-O modificar directamente el archivo `analisis_gbd.py` para utilizar las siguientes funciones:
+O desde Python:
+
+```bash
+python3 src/analisis_personalizado.py
+```
+
+### Opción 3: Uso Programático
 
 ```python
+from pathlib import Path
+import sys
+
+# Añadir src al path si es necesario
+sys.path.append('src')
+
 from analisis_gbd import AnalizadorGBD
 
 # Crear analizador
-analizador = AnalizadorGBD("gbd_all_dalys_1423.csv")
+analizador = AnalizadorGBD("data/gbd_all_dalys_1423.csv")
 
 # Evolución temporal de las 15 causas principales
 analizador.evolucion_temporal_top_causas(
@@ -72,15 +121,7 @@ analizador.ranking_causas(
     ubicacion="Global",
     sexo="Both",
     edad="All ages",
-    horizontal=True
-)
-
-# Comparación por sexo
-analizador.comparacion_por_sexo(
-    top_n=20,
-    ubicacion="Global",
-    edad="All ages",
-    año=2020
+    horizontal=True  # False para vertical
 )
 
 # Mapa de calor
@@ -92,72 +133,129 @@ analizador.heatmap_causas_años(
 )
 ```
 
-## Parámetros Disponibles
+## 📊 Tipos de Visualizaciones
 
-### `evolucion_temporal_top_causas()`
-- `top_n`: Número de causas principales a mostrar (default: 10)
+### 1. Evolución Temporal
+Gráfico de líneas mostrando cómo evolucionan las principales causas a lo largo del tiempo.
+
+**Función:** `evolucion_temporal_top_causas()`
+
+**Parámetros:**
+- `top_n`: Número de causas principales (default: 10)
 - `ubicacion`: Ubicación geográfica (ej: "Global")
 - `sexo`: "Both", "Male" o "Female"
 - `edad`: Grupo de edad (ej: "All ages")
 
-### `ranking_causas()`
+### 2. Rankings
+Gráfico de barras (horizontal o vertical) con las causas ordenadas por impacto.
+
+**Función:** `ranking_causas()`
+
+**Parámetros:**
 - `año`: Año específico (None = promedio de todos los años)
-- `top_n`: Número de causas a mostrar (default: 20)
+- `top_n`: Número de causas (default: 20)
 - `ubicacion`: Ubicación geográfica
 - `sexo`: "Both", "Male" o "Female"
 - `edad`: Grupo de edad
 - `horizontal`: True para barras horizontales, False para verticales
 
-### `comparacion_por_sexo()`
+### 3. Comparación por Sexo
+Gráfico de barras agrupadas comparando hombres vs mujeres.
+
+**Función:** `comparacion_por_sexo()`
+
+**Parámetros:**
 - `top_n`: Número de causas principales (default: 15)
 - `ubicacion`: Ubicación geográfica
 - `edad`: Grupo de edad
 - `año`: Año específico (None = promedio)
 
-### `heatmap_causas_años()`
+**Nota:** Solo funciona si el dataset contiene datos separados por sexo.
+
+### 4. Mapa de Calor
+Heatmap mostrando la intensidad de DALYs por causa y año.
+
+**Función:** `heatmap_causas_años()`
+
+**Parámetros:**
 - `top_n`: Número de causas principales (default: 15)
 - `ubicacion`: Ubicación geográfica
 - `sexo`: "Both", "Male" o "Female"
 - `edad`: Grupo de edad
 
-## Estructura del Proyecto
+## 📦 Dependencias
 
-```
-.
-├── gbd_all_dalys_1423.csv      # Archivo de datos
-├── analisis_gbd.py              # Script principal de análisis
-├── analisis_personalizado.py   # Script para análisis personalizado
-├── requirements.txt             # Dependencias de Python
-├── README.md                    # Este archivo
-└── graficos/                    # Carpeta con los gráficos generados (se crea automáticamente)
-```
+- **pandas** (≥2.0.0): Análisis y manipulación de datos
+- **matplotlib** (≥3.7.0): Creación de gráficos
+- **seaborn** (≥0.12.0): Visualizaciones estadísticas
+- **numpy** (≥1.24.0): Operaciones numéricas
 
-## Datos
+## 📄 Datos
 
-El archivo `gbd_all_dalys_1423.csv` contiene datos del Global Burden of Disease con las siguientes columnas:
+El archivo `data/gbd_all_dalys_1423.csv` contiene datos del Global Burden of Disease con las siguientes columnas:
 
-- `measure_name`: Medida (DALYs)
-- `location_name`: Ubicación geográfica
-- `sex_name`: Sexo (Both/Male/Female)
-- `age_name`: Grupo de edad
-- `cause_name`: Causa/enfermedad
-- `year`: Año
-- `val`: Valor de DALYs
-- `upper`/`lower`: Intervalos de confianza
+| Columna | Descripción |
+|---------|-------------|
+| `measure_name` | Medida (DALYs) |
+| `location_name` | Ubicación geográfica |
+| `sex_name` | Sexo (Both/Male/Female) |
+| `age_name` | Grupo de edad |
+| `cause_name` | Causa/enfermedad |
+| `year` | Año |
+| `val` | Valor de DALYs |
+| `upper`/`lower` | Intervalos de confianza |
 
-## Ejemplos de Salida
+**Información del dataset actual:**
+- Años: 2014-2023
+- Ubicaciones: 1 (Global)
+- Causas/Enfermedades: 381
+- Grupos de edad: 1 (All ages)
+- Sexo: Both
 
-Los gráficos generados incluyen:
+## 🎨 Ejemplos de Salida
 
-1. **Evolución Temporal**: Líneas temporales mostrando cómo cambian los DALYs de las principales causas
-2. **Rankings**: Barras horizontales o verticales con las causas ordenadas por impacto
-3. **Comparación por Sexo**: Barras agrupadas comparando hombres vs mujeres
-4. **Mapas de Calor**: Heatmap mostrando intensidad de DALYs por causa y año
+Los gráficos generados se guardan en `output/graficos/` con nombres descriptivos:
 
-## Contribuciones
+- `evolucion_temporal_top10_Global_Both_All_ages.png`
+- `ranking_top20_2017_Global_Both_All_ages_horiz.png`
+- `heatmap_top15_Global_Both_All_ages.png`
 
-Este proyecto es de código abierto. Siéntete libre de contribuir con mejoras o reportar problemas.
+Todos los gráficos incluyen:
+- Títulos descriptivos con parámetros utilizados
+- Valores numéricos formateados con separadores de miles
+- Colores profesionales y atractivos
+- Alta resolución (300 DPI) para publicaciones
 
-## Licencia
+## 🔧 Personalización Avanzada
 
-MIT License
+Para crear análisis más complejos, puedes:
+
+1. Importar la clase `AnalizadorGBD` en tu propio script
+2. Combinar múltiples visualizaciones
+3. Modificar los parámetros de estilo en `analisis_gbd.py` (líneas 15-18)
+4. Añadir nuevos métodos de visualización
+
+## 🤝 Contribuciones
+
+Las contribuciones son bienvenidas. Por favor:
+
+1. Haz fork del proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📝 Licencia
+
+MIT License - Siéntete libre de usar este proyecto para cualquier propósito.
+
+## 📧 Soporte
+
+Si encuentras problemas o tienes preguntas:
+- Abre un issue en GitHub
+- Revisa que todas las dependencias estén instaladas
+- Verifica que el archivo de datos esté en la ubicación correcta
+
+---
+
+**¡Disfruta analizando datos del Global Burden of Disease!** 🎉

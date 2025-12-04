@@ -28,8 +28,12 @@ class AnalizadorGBD:
         print(f"✓ Datos cargados: {len(self.df)} registros")
 
         # Crear carpeta para guardar los gráficos
-        self.carpeta_graficos = Path("graficos")
-        self.carpeta_graficos.mkdir(exist_ok=True)
+        # Detecta si se ejecuta desde src/ o desde raíz
+        if Path.cwd().name == 'src':
+            self.carpeta_graficos = Path("../output/graficos")
+        else:
+            self.carpeta_graficos = Path("output/graficos")
+        self.carpeta_graficos.mkdir(parents=True, exist_ok=True)
 
         # Mostrar información básica
         self._mostrar_info_basica()
@@ -205,6 +209,14 @@ class AnalizadorGBD:
         """
         print(f"\n📊 Generando comparación por sexo (Top {top_n} causas)...")
 
+        # Verificar si hay datos por sexo
+        sexos_disponibles = self.df['sex_name'].unique()
+        if not ('Male' in sexos_disponibles and 'Female' in sexos_disponibles):
+            print(f"⚠️  No hay datos separados por sexo (Male/Female) en el dataset")
+            print(f"   Sexos disponibles: {', '.join(sexos_disponibles)}")
+            print(f"   Omitiendo análisis de comparación por sexo...")
+            return None
+
         # Filtrar datos
         df_filtrado = self.df[
             (self.df['location_name'] == ubicacion) &
@@ -214,6 +226,10 @@ class AnalizadorGBD:
 
         if año:
             df_filtrado = df_filtrado[df_filtrado['year'] == año]
+
+        if len(df_filtrado) == 0:
+            print(f"⚠️  No hay datos disponibles para los parámetros especificados")
+            return None
 
         # Calcular totales por sexo
         comparacion = df_filtrado.groupby(['cause_name', 'sex_name'])['val'].mean().reset_index()
@@ -352,8 +368,11 @@ class AnalizadorGBD:
 
 def main():
     """Función principal"""
-    # Archivo de datos
-    archivo_csv = "gbd_all_dalys_1423.csv"
+    # Archivo de datos - detecta si se ejecuta desde src/ o desde raíz
+    if Path.cwd().name == 'src':
+        archivo_csv = "../data/gbd_all_dalys_1423.csv"
+    else:
+        archivo_csv = "data/gbd_all_dalys_1423.csv"
 
     # Crear analizador
     analizador = AnalizadorGBD(archivo_csv)
